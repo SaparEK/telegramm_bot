@@ -155,9 +155,18 @@ def open_website(message):
 # Обработчик входящих запросов от Telegram
 @app.route("/", methods=["POST"])
 def webhook():
-    json_str = request.get_data().decode("utf-8")
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
+    # Логируем входящий запрос
+    print("Incoming request:", request.json)
+
+    try:
+        json_str = request.get_data().decode("utf-8")
+        update = telebot.types.Update.de_json(json_str)
+        print("Decoded update:", update)
+
+        # Обрабатываем обновление
+        bot.process_new_updates([update])
+    except Exception as e:
+        print("Error processing update:", e)
     return "OK", 200
 
 # Запуск приложения
