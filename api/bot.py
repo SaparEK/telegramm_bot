@@ -152,7 +152,7 @@ def handle_question_answer(call):
 
 @bot.message_handler(func=lambda message: message.text in ['Веб-сайт 🌐', 'Website 🌐'])
 def open_website(message):
-    url = 'https://your-website.com'  # Замените на ваш URL
+    url = 'https://ttkz-zbfg.vercel.app/'  # Замените на ваш URL
     bot.send_message(
         message.chat.id,
         'Перейдите на наш сайт по ссылке ниже:' if LANGUAGE == 'ru' else 'Visit our website using the link below:'
