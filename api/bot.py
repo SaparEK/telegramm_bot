@@ -23,13 +23,13 @@ Name = None
 # Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def start(message):
-    conn = psycopg2.connect(Database)
-    cur = conn.cursor()
-    cur.execute('CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(50), phone VARCHAR(50))')
-    cur.execute('CREATE TABLE IF NOT EXISTS admins (id SERIAL PRIMARY KEY, chat_id int)')
-    conn.commit()
-    cur.close()
-    conn.close()
+    # conn = psycopg2.connect(Database)
+    # cur = conn.cursor()
+    # cur.execute('CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(50), phone VARCHAR(50))')
+    # cur.execute('CREATE TABLE IF NOT EXISTS admins (id SERIAL PRIMARY KEY, chat_id int)')
+    # conn.commit()
+    # cur.close()
+    # conn.close()
 
     markup = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton('ru 🇷🇺', callback_data='ru')
