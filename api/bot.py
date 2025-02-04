@@ -23,6 +23,10 @@ Name = None
 # Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def start(message):
+    # Обнуляем переменные состояния
+    global LANGUAGE, Name
+    LANGUAGE = None
+    Name = None
     # conn = psycopg2.connect(Database)
     # cur = conn.cursor()
     # cur.execute('CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(50), phone VARCHAR(50))')
@@ -42,32 +46,20 @@ def start(message):
 def handle_language_selection(call):
     global LANGUAGE
     LANGUAGE = call.data
-    # Создаем inline-клавиатуру
-    markup = types.InlineKeyboardMarkup()
-    btn_popular_questions = types.InlineKeyboardButton(
-        'Популярные вопросы ❓' if LANGUAGE == 'ru' else 'Popular Questions ❓',
-        callback_data='popular_questions'
-    )
-    btn_contact_operator = types.InlineKeyboardButton(
-        'Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻',
-        callback_data='contact_operator'
-    )
-    btn_website = types.InlineKeyboardButton(
-        'Веб-сайт 🌐' if LANGUAGE == 'ru' else 'Website 🌐',
-        url='https://example.com'  # Укажите URL вашего сайта
-    )
+    bot.send_message(call.message.chat.id, 'Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅')
+
+    # Показать главное меню
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btn_popular_questions = types.KeyboardButton('Популярные вопросы ❓' if LANGUAGE == 'ru' else 'Popular Questions ❓')
+    btn_contact_operator = types.KeyboardButton('Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻')
+    btn_website = types.KeyboardButton('Веб-сайт 🌐' if LANGUAGE == 'ru' else 'Website 🌐')
     markup.add(btn_popular_questions, btn_contact_operator, btn_website)
 
-    # Редактируем текущее сообщение с новой клавиатурой
-    bot.edit_message_text(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        text='Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅',
-        reply_markup=markup
-    )
+    greeting = 'Выберите действие:' if LANGUAGE == 'ru' else 'Choose an action:'
+    bot.send_message(call.message.chat.id, greeting, reply_markup=markup)
 
-    # Завершаем callback-запрос
-    bot.answer_callback_query(call.id)
+    # Не добавляем register_next_step_handler, чтобы бот не ждал дополнительных сообщений
+
 
 # Обработчик связи с оператором
 @bot.message_handler(func=lambda message: message.text in ['Связаться с оператором 👨‍💻', 'Contact Operator 👨‍💻'])
