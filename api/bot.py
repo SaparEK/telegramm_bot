@@ -15,7 +15,7 @@ LANGUAGE = None
 Name = None
 
 Database = "postgresql://postgres.lzcvrueruoyvqeipndwn:2003era2003@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
-WEBHOOK_URL = f"https://telegram-avpjofwlg-ersultans-projects.vercel.app/{TOKEN}"  # Путь для Vercel
+WEBHOOK_URL = f"https://telegram-bot-three-jet.vercel.app/{TOKEN}"  # Путь для Vercel
 
 @bot.message_handler(commands=['start'])
 def start(message):
