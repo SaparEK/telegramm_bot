@@ -42,21 +42,31 @@ def start(message):
 def handle_language_selection(call):
     global LANGUAGE
     LANGUAGE = call.data
-    bot.send_message(call.message.chat.id, 'Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅')
-
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn_popular_questions = types.KeyboardButton('Популярные вопросы ❓' if LANGUAGE == 'ru' else 'Popular Questions ❓')
-    btn_contact_operator = types.KeyboardButton(
-        'Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻')
-    btn_website = types.KeyboardButton('Веб-сайт 🌐' if LANGUAGE == 'ru' else 'Website 🌐')
+    # Создаем inline-клавиатуру
+    markup = types.InlineKeyboardMarkup()
+    btn_popular_questions = types.InlineKeyboardButton(
+        'Популярные вопросы ❓' if LANGUAGE == 'ru' else 'Popular Questions ❓',
+        callback_data='popular_questions'
+    )
+    btn_contact_operator = types.InlineKeyboardButton(
+        'Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻',
+        callback_data='contact_operator'
+    )
+    btn_website = types.InlineKeyboardButton(
+        'Веб-сайт 🌐' if LANGUAGE == 'ru' else 'Website 🌐',
+        url='https://example.com'  # Укажите URL вашего сайта
+    )
     markup.add(btn_popular_questions, btn_contact_operator, btn_website)
 
-    greeting = 'Выберите действие:' if LANGUAGE == 'ru' else 'Choose an action:'
+    # Редактируем текущее сообщение с новой клавиатурой
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text='Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅',
+        reply_markup=markup
+    )
 
-    # Сначала отправляем все необходимые сообщения
-    bot.send_message(call.message.chat.id, greeting, reply_markup=markup)
-
-    # Закрываем текущий callback, чтобы не ожидать ввода
+    # Завершаем callback-запрос
     bot.answer_callback_query(call.id)
 
 # Обработчик связи с оператором
