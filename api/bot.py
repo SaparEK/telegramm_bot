@@ -4,16 +4,18 @@ import telebot
 from telebot import types
 import psycopg2
 from flask import Flask, request
-
+from dotenv import load_dotenv
+import os
 app = Flask(__name__)
-bot = telebot.TeleBot('8054757162:AAGoE06X8IXL-f6gNqYN_Pq1nVPm-by3w3Y')
-
+load_dotenv()
+TOKEN = os.getenv("TOKEN")
+bot = telebot.TeleBot(TOKEN)
 # bot.remove_webhook()
 LANGUAGE = None
 Name = None
 
 Database = "postgresql://postgres.lzcvrueruoyvqeipndwn:2003era2003@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
-WEBHOOK_PATH = "/api/webhook"  # Путь для Vercel
+WEBHOOK_URL = f"https://telegram-avpjofwlg-ersultans-projects.vercel.app/{TOKEN}"  # Путь для Vercel
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -178,23 +180,24 @@ def delete_admin(message):
     bot.send_message(message.chat.id, 'Менеджер удален')
 
 # 🔹 Установка Webhook
-@bot.message_handler(commands=['set_webhook'])
-def set_webhook(message):
-    webhook_url = f"https://telegram-avpjofwlg-ersultans-projects.vercel.app{WEBHOOK_PATH}"  # Укажите ваш Vercel-домен
-    bot.set_webhook(url=webhook_url)
-    bot.send_message(message.chat.id, "✅ Webhook установлен!")
+@app.route("/")
+def index():
+    return "Бот работает!"
 
-# 🔹 Удаление Webhook
-@bot.message_handler(commands=['delete_webhook'])
-def delete_webhook(message):
-    bot.delete_webhook()
-    bot.send_message(message.chat.id, "❌ Webhook удалён!")
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    json_str = request.get_data().decode('UTF-8')
+
+@app.route("/set_webhook")
+def set_webhook():
+    bot.remove_webhook()
+    bot.set_webhook(WEBHOOK_URL)
+    return f"Webhook установлен: {WEBHOOK_URL}", 200
+
+@app.route(f"/{TOKEN}", methods=["POST"])
+def receive_update():
+    json_str = request.get_data().decode("utf-8")
     update = telebot.types.Update.de_json(json_str)
     bot.process_new_updates([update])
-    return 'OK', 200
+    return "OK", 200
+
 
 # bot.polling(none_stop=True)
 if __name__ == "__main__":
