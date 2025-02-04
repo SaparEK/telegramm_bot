@@ -52,7 +52,12 @@ def handle_language_selection(call):
     markup.add(btn_popular_questions, btn_contact_operator, btn_website)
 
     greeting = 'Выберите действие:' if LANGUAGE == 'ru' else 'Choose an action:'
+
+    # Сначала отправляем все необходимые сообщения
     bot.send_message(call.message.chat.id, greeting, reply_markup=markup)
+
+    # Закрываем текущий callback, чтобы не ожидать ввода
+    bot.answer_callback_query(call.id)
 
 # Обработчик связи с оператором
 @bot.message_handler(func=lambda message: message.text in ['Связаться с оператором 👨‍💻', 'Contact Operator 👨‍💻'])
