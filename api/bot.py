@@ -46,17 +46,27 @@ def start(message):
 def handle_language_selection(call):
     global LANGUAGE
     LANGUAGE = call.data
-    bot.send_message(call.message.chat.id, 'Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅')
+    # Редактируем текущее сообщение (вместо отправки нового)
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text='Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅'
+    )
 
-    # Показать главное меню
+    # Создаем клавиатуру
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn_popular_questions = types.KeyboardButton('Популярные вопросы ❓' if LANGUAGE == 'ru' else 'Popular Questions ❓')
-    btn_contact_operator = types.KeyboardButton('Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻')
+    btn_contact_operator = types.KeyboardButton(
+        'Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻')
     btn_website = types.KeyboardButton('Веб-сайт 🌐' if LANGUAGE == 'ru' else 'Website 🌐')
     markup.add(btn_popular_questions, btn_contact_operator, btn_website)
 
+    # Отправляем новое сообщение с клавиатурой
     greeting = 'Выберите действие:' if LANGUAGE == 'ru' else 'Choose an action:'
     bot.send_message(call.message.chat.id, greeting, reply_markup=markup)
+
+    # Завершаем callback-запрос
+    bot.answer_callback_query(call.id)
 
     # Не добавляем register_next_step_handler, чтобы бот не ждал дополнительных сообщений
 
