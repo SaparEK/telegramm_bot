@@ -43,18 +43,16 @@ def handle_language_selection(call):
     global LANGUAGE
     LANGUAGE = call.data
     bot.send_message(call.message.chat.id, 'Вы выбрали русский язык! ✅' if LANGUAGE == 'ru' else 'You selected English! ✅')
-    show_main_menu(call.message)
 
-# Показ главного меню
-def show_main_menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn_popular_questions = types.KeyboardButton('Популярные вопросы ❓' if LANGUAGE == 'ru' else 'Popular Questions ❓')
-    btn_contact_operator = types.KeyboardButton('Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻')
+    btn_contact_operator = types.KeyboardButton(
+        'Связаться с оператором 👨‍💻' if LANGUAGE == 'ru' else 'Contact Operator 👨‍💻')
     btn_website = types.KeyboardButton('Веб-сайт 🌐' if LANGUAGE == 'ru' else 'Website 🌐')
     markup.add(btn_popular_questions, btn_contact_operator, btn_website)
 
     greeting = 'Выберите действие:' if LANGUAGE == 'ru' else 'Choose an action:'
-    bot.send_message(message.chat.id, greeting, reply_markup=markup)
+    bot.send_message(call.message.chat.id, greeting, reply_markup=markup)
 
 # Обработчик связи с оператором
 @bot.message_handler(func=lambda message: message.text in ['Связаться с оператором 👨‍💻', 'Contact Operator 👨‍💻'])
